@@ -6,6 +6,8 @@ services:
     restart: always
     build: ./
     image: golang-tg-bot
+    env_file:
+      - bot.env
     depends_on:
       - postgres-db
 
