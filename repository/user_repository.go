@@ -10,6 +10,7 @@ type UserRepository interface {
 	Create(user *model.User) error
 	GetByID(id uint) (*model.User, error)
 	GetByChatID(chatID int64) (*model.User, error)
+	GetByTelegramID(tgID int64) (*model.User, error)
 	Update(user *model.User) error
 	Delete(user *model.User) error
 }
@@ -36,7 +37,7 @@ func (r *userRepository) GetByID(id uint) (*model.User, error) {
 
 func (r *userRepository) GetByChatID(chatID int64) (*model.User, error) {
 	var user model.User
-	if err := r.db.Model(&user).Where("chat_id = ?", chatID).First(&user).Error; err != nil {
+	if err := r.db.Where("chat_id = ?", chatID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -48,4 +49,12 @@ func (r *userRepository) Update(user *model.User) error {
 
 func (r *userRepository) Delete(user *model.User) error {
 	return r.db.Delete(user).Error
+}
+
+func (r *userRepository) GetByTelegramID(tgID int64) (*model.User, error) {
+	var user model.User
+	if err := r.db.Where("telegram_id = ?", tgID).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }

@@ -4,9 +4,10 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	ChatID int64 `gorm:"index"`
-	State  UserState
-	ISU    uint64
+	ChatID     int64 `gorm:"index"`
+	TelegramID int64 `gorm:"index"`
+	State      UserState
+	ISU        uint64
 }
 
 type UserState uint64
