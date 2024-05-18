@@ -1,7 +1,9 @@
 package model
 
+import "gorm.io/gorm"
+
 type User struct {
-	ID     uint64
+	gorm.Model
 	ChatID int64
 	State  UserState
 	ISU    uint64

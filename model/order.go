@@ -1,13 +1,15 @@
 package model
 
+import "gorm.io/gorm"
+
 type Order struct {
-	ID             uint64
+	gorm.Model
 	State          OrderState
 	ContactInfo    string
 	Reward         string
 	Place          Building
 	CreatorChatID  int64
-	AssigneeChatID int64
+	AssigneeChatID *int64 // intptr to allow null values
 }
 
 type OrderState uint64
