@@ -42,7 +42,9 @@ func main() {
 			chatID := update.Message.Chat.ID
 
 			if _, ok := userStates[chatID]; !ok {
-				userStates[chatID] = model.Start
+
+				// TODO: Unregistered users should be returned to register menu, registered users should be returned to main menu
+				userStates[chatID] = model.Main
 			}
 
 			userState := userStates[chatID]
