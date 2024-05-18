@@ -10,6 +10,8 @@ services:
       - bot.env
     depends_on:
       - postgres-db
+    networks:
+      - postgres
 
   postgres-db:
     image: postgres:15.5
@@ -39,9 +41,12 @@ services:
       - pgadmin-data:/var/lib/pgAdmin
     networks:
       - postgres
+    depends_on:
+      - postgres-db    
 
 networks:
   postgres:
+    driver: bridge
 
 volumes:
   postgres-db-data:
