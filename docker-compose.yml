@@ -20,7 +20,7 @@ services:
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=auth
+      - POSTGRES_DB=itmo_delivery
     volumes:
       - postgres-db-data:/var/lib/postgresql/data
     networks:
