@@ -14,7 +14,7 @@ func mapBuildingToKeyboardRow(building ...model.Building) []tgbotapi.KeyboardBut
 	return tgbotapi.NewKeyboardButtonRow(newArr...)
 }
 
-var mainMenuKeyboard = tgbotapi.NewReplyKeyboard(
+var MainMenuKeyboard = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton("Новый заказ"),
 		tgbotapi.NewKeyboardButton("Посмотреть заказы(Курьер)"),
@@ -57,7 +57,7 @@ var confirmMenu = tgbotapi.NewReplyKeyboard(
 )
 
 var StateToKeyboard = map[model.UserState]tgbotapi.ReplyKeyboardMarkup{
-	model.Main: mainMenuKeyboard,
+	model.Main: MainMenuKeyboard,
 
 	model.NewOrderSelectBuilding:   selectBuildingMenu,
 	model.NewOrderInputDescription: backMenu,
