@@ -28,7 +28,7 @@ var OrderToText = map[OrderState]string{
 
 type Building string
 
-var AvailableBuildings = [...]Building{
+var AvailableBuildings = []Building{
 	"Кронверкский пр. 49",
 	"Ул. Ломоносова, 9",
 	"Биржевая линия, 14-16",
