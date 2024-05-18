@@ -4,8 +4,14 @@ import (
 	"log"
 	"os"
 
+	// telegram "itmo_delivery/telegram"
+	model "itmo_delivery/model"
+	"itmo_delivery/telegram"
+
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
+
+var userStates = make(map[int64]model.UserState)
 
 func main() {
 	botApiKey := os.Getenv("ITMO_DELIVERY_BOT_API_KEY")
@@ -33,9 +39,17 @@ func main() {
 		if update.Message != nil {
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Test?")
+			chatID := update.Message.Chat.ID
 
-			bot.Send(msg)
+			if _, ok := userStates[chatID]; !ok {
+				userStates[chatID] = model.Start
+			}
+
+			userState := userStates[chatID]
+
+			newState := telegram.MessageHandler(bot, update, userState)
+
+			userStates[chatID] = newState
 		}
 	}
 }
