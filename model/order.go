@@ -6,7 +6,7 @@ type Order struct {
 	ContactInfo    string
 	Reward         string
 	CreatorChatID  int64
-	AssignedChatID int64
+	AssigneeChatID int64
 }
 
 type OrderState string
