@@ -6,7 +6,7 @@ import (
 
 	// telegram "itmo_delivery/telegram"
 	model "itmo_delivery/model"
-	"itmo_delivery/telegram"
+	telegram "itmo_delivery/telegram"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
