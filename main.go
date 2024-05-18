@@ -4,14 +4,10 @@ import (
 	"log"
 	"os"
 
-	// telegram "itmo_delivery/telegram"
-	model "itmo_delivery/model"
 	telegram "itmo_delivery/telegram"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
-
-var userStates = make(map[int64]model.UserState)
 
 func main() {
 	botApiKey := os.Getenv("ITMO_DELIVERY_BOT_API_KEY")
@@ -26,7 +22,9 @@ func main() {
 		log.Panic(err)
 	}
 
-	MustInitializeDB()
+	db := MustInitializeDB()
+
+	handler := telegram.NewMessageHandler(db, bot)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -41,19 +39,7 @@ func main() {
 		if update.Message != nil {
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			chatID := update.Message.Chat.ID
-
-			if _, ok := userStates[chatID]; !ok {
-
-				// TODO: Unregistered users should be returned to register menu, registered users should be returned to main menu
-				userStates[chatID] = model.Main
-			}
-
-			userState := userStates[chatID]
-
-			newState := telegram.MessageHandler(bot, update, userState)
-
-			userStates[chatID] = newState
+			handler.Handle(update)
 		}
 	}
 }

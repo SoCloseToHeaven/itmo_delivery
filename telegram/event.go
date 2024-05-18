@@ -2,22 +2,50 @@ package telegram
 
 import (
 	"itmo_delivery/model"
+	"itmo_delivery/repository"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"gorm.io/gorm"
 )
 
-// returns new state for a user
-type Handler func(bot *tgbotapi.BotAPI, u tgbotapi.Update, state model.UserState) model.UserState
+type Handler func(u tgbotapi.Update)
 
-var stateToHandler = map[model.UserState]Handler{}
+type updateHandler struct {
+	db              *gorm.DB
+	UserRepository  repository.UserRepository
+	OrderRepository repository.OrderRepository
+	StateToHandler  map[model.UserState]Handler
+	Bot             *tgbotapi.BotAPI
+}
 
-func MessageHandler(bot *tgbotapi.BotAPI, u tgbotapi.Update, state model.UserState) model.UserState {
+type MessageHandler interface {
+	Handle(u tgbotapi.Update)
+}
 
-	handler, found := stateToHandler[state]
+func NewMessageHandler(db *gorm.DB, bot *tgbotapi.BotAPI) MessageHandler {
+	return &updateHandler{
+		db:              db,
+		UserRepository:  repository.NewUserRepository(db),
+		OrderRepository: repository.NewOrderRepository(db),
+		StateToHandler:  map[model.UserState]Handler{},
+		Bot:             bot,
+	}
+}
 
-	if !found {
-		return model.Main
+func (r *updateHandler) Handle(u tgbotapi.Update) {
+	// TODO: add logic
+
+}
+
+func (r *updateHandler) setUserState(user *model.User, newState model.UserState) error {
+	user.State = newState
+	if err := r.UserRepository.Update(user); err != nil {
+		return err
 	}
 
-	return handler(bot, u, state)
+	msg := tgbotapi.NewMessage(user.ChatID, "")
+	msg.ReplyMarkup = StateToKeyboard[newState]
+
+	_, err := r.Bot.Send(msg)
+	return err
 }
