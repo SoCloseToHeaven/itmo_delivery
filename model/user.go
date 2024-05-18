@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	ChatID int64
+	ChatID int64 `gorm:"index"`
 	State  UserState
 	ISU    uint64
 }
