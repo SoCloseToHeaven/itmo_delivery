@@ -45,6 +45,7 @@ func (r *userRepository) GetByChatID(chatID int64) (*model.User, error) {
 func (r *userRepository) Update(user *model.User) error {
 	return r.db.Save(user).Error
 }
+
 func (r *userRepository) Delete(user *model.User) error {
 	return r.db.Delete(user).Error
 }
