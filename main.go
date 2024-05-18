@@ -26,6 +26,8 @@ func main() {
 		log.Panic(err)
 	}
 
+	MustInitializeDB()
+
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
