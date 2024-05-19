@@ -17,7 +17,6 @@ const (
 
 	NewOrderSelectBuilding
 	NewOrderInputDescription
-	NewOrderInputContacts
 	NewOrderConfirm
 
 	MyOrders
