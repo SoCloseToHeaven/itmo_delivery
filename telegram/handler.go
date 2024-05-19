@@ -8,13 +8,13 @@ import (
 	"gorm.io/gorm"
 )
 
-type Handler func(u tgbotapi.Update)
+type EventHandler func(user *model.User, u tgbotapi.Update) tgbotapi.MessageConfig
 
 type updateHandler struct {
 	db              *gorm.DB
 	UserRepository  repository.UserRepository
 	OrderRepository repository.OrderRepository
-	StateToHandler  map[model.UserState]Handler
+	StateToHandler  map[model.UserState]EventHandler
 	Bot             *tgbotapi.BotAPI
 }
 
@@ -23,13 +23,15 @@ type MessageHandler interface {
 }
 
 func NewMessageHandler(db *gorm.DB, bot *tgbotapi.BotAPI) MessageHandler {
-	return &updateHandler{
+	handler := &updateHandler{
 		db:              db,
 		UserRepository:  repository.NewUserRepository(db),
 		OrderRepository: repository.NewOrderRepository(db),
-		StateToHandler:  map[model.UserState]Handler{},
+		StateToHandler:  map[model.UserState]EventHandler{},
 		Bot:             bot,
 	}
+
+	return handler
 }
 
 // add logging
@@ -52,8 +54,8 @@ func (r *updateHandler) Handle(u tgbotapi.Update) {
 
 func (r *updateHandler) setStateKeyboard(user *model.User, msg *tgbotapi.MessageConfig) {
 	keyboard := StateToKeyboard[user.State]
-	keyboard.ResizeKeyboard = true  // Адаптивный размер клавиатуры
-	keyboard.OneTimeKeyboard = true // Клавиатура будет доступна повторно
+	keyboard.ResizeKeyboard = true
+	keyboard.OneTimeKeyboard = true
 
 	msg.ReplyMarkup = StateToKeyboard[user.State]
 }
