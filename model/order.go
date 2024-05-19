@@ -4,12 +4,12 @@ import "gorm.io/gorm"
 
 type Order struct {
 	gorm.Model
-	State          OrderState
+	State          OrderState `gorm:"index"`
 	ContactInfo    string
 	Reward         string
-	Place          Building
-	CreatorChatID  int64
-	AssigneeChatID *int64 // intptr to allow null values
+	Place          Building `gorm:"index"`
+	CreatorChatID  int64    `gorm:"index"`
+	AssigneeChatID *int64   // intptr to allow null values
 }
 
 type OrderState uint64
