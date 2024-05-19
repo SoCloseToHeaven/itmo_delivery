@@ -29,7 +29,7 @@ var mainActionsMap = ActionsMap{
 	NewOrderButtonText:    model.NewOrderSelectBuilding,
 	AboutBotButtonText:    model.AboutBot,
 	WatchOrdersButtonText: model.CourierSelectBuilding,
-	MyOrdersButtonText:    model.Main,
+	MyOrdersButtonText:    model.MyOrders,
 }
 
 var aboutBotActionsMap = ActionsMap{
@@ -60,6 +60,7 @@ var newOrderSelectBuildingActionsMap = mapAvailableBuildings(
 	model.Main,
 )
 
+// Переход на подверждение заказа через текстовое поле
 var newOrderInputDescriptionActionsMap = ActionsMap{
 	BackButtonText: model.NewOrderSelectBuilding,
 }
@@ -74,6 +75,7 @@ var courierSelectBuildingActionsMap = mapAvailableBuildings(
 	model.Main,
 )
 
+// Переход на подверждение заказа через текстовое поле
 var courierActiveOrdersActionsMap = ActionsMap{
 	BackButtonText: model.CourierSelectBuilding,
 }

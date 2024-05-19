@@ -58,7 +58,7 @@ var selectBuildingMenu = tgbotapi.NewReplyKeyboard(
 
 var backMenu = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton(CancelButtonText),
+		tgbotapi.NewKeyboardButton(BackButtonText),
 	),
 )
 
@@ -76,10 +76,12 @@ var StateToKeyboard = map[model.UserState]tgbotapi.ReplyKeyboardMarkup{
 	model.NewOrderInputDescription: backMenu,
 	model.NewOrderConfirm:          confirmMenu,
 
+	model.MyOrders: backMenu,
+
 	model.AboutBot:    aboutBotMenu,
-	model.Instruction: aboutBotMenu,
-	model.Feedback:    aboutBotMenu,
-	model.Support:     aboutBotMenu,
+	model.Instruction: backMenu,
+	model.Feedback:    backMenu,
+	model.Support:     backMenu,
 
 	model.CourierSelectBuilding: selectBuildingMenu,
 	model.CourierActiveOrders:   backMenu,
