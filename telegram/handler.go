@@ -8,13 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type EventHandler func(user *model.User, u tgbotapi.Update) tgbotapi.MessageConfig
-
 type updateHandler struct {
-	db              *gorm.DB
+	DB              *gorm.DB
 	UserRepository  repository.UserRepository
 	OrderRepository repository.OrderRepository
-	StateToHandler  map[model.UserState]EventHandler
 	Bot             *tgbotapi.BotAPI
 }
 
@@ -24,10 +21,9 @@ type MessageHandler interface {
 
 func NewMessageHandler(db *gorm.DB, bot *tgbotapi.BotAPI) MessageHandler {
 	handler := &updateHandler{
-		db:              db,
+		DB:              db,
 		UserRepository:  repository.NewUserRepository(db),
 		OrderRepository: repository.NewOrderRepository(db),
-		StateToHandler:  map[model.UserState]EventHandler{},
 		Bot:             bot,
 	}
 
@@ -47,9 +43,31 @@ func (r *updateHandler) Handle(u tgbotapi.Update) {
 		return
 	}
 
-	reply := tgbotapi.NewMessage(user.ChatID, "privetik")
+	_ = Events[user.State](r, user, u)
+
+}
+
+func (r *updateHandler) next(reply tgbotapi.MessageConfig, user *model.User, newState model.UserState) error {
+	if err := r.updateUserState(user, newState); err != nil {
+		return err
+	}
+
 	r.setStateKeyboard(user, &reply)
-	r.Bot.Send(reply)
+
+	if _, err := r.Bot.Send(reply); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *updateHandler) updateUserState(user *model.User, newState model.UserState) error {
+	if user.State == newState {
+		return nil
+	}
+
+	user.State = newState
+	return r.UserRepository.Update(user)
 }
 
 func (r *updateHandler) setStateKeyboard(user *model.User, msg *tgbotapi.MessageConfig) {
