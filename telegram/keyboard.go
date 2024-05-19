@@ -6,6 +6,19 @@ import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
 
+const (
+	NewOrderButtonText    = "Новый заказ"
+	WatchOrdersButtonText = "Посмотреть заказы(Курьер)"
+	AboutBotButtonText    = "О боте"
+	MyOrdersButtonText    = "Мои заказы"
+	BackButtonText        = "Назад"
+	ConfirmButtonText     = "Подтвердить"
+	CancelButtonText      = "Отменить"
+	SupportButtonText     = "Обратиться в поддержку"
+	FeedbackButtonText    = "Оставить обратную связь"
+	InstructionButtonText = "Инструкция пользователя"
+)
+
 func mapBuildingToKeyboardRow(building ...model.Building) []tgbotapi.KeyboardButton {
 	newArr := []tgbotapi.KeyboardButton{}
 	for _, elem := range building {
@@ -16,43 +29,43 @@ func mapBuildingToKeyboardRow(building ...model.Building) []tgbotapi.KeyboardBut
 
 var MainMenuKeyboard = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton("Новый заказ"),
-		tgbotapi.NewKeyboardButton("Посмотреть заказы(Курьер)"),
+		tgbotapi.NewKeyboardButton(NewOrderButtonText),
+		tgbotapi.NewKeyboardButton(WatchOrdersButtonText),
 	),
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton("О боте"),
-		tgbotapi.NewKeyboardButton("Мои заказы"),
+		tgbotapi.NewKeyboardButton(AboutBotButtonText),
+		tgbotapi.NewKeyboardButton(MyOrdersButtonText),
 	),
 )
 
 var aboutBotMenu = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton("Назад"),
-		tgbotapi.NewKeyboardButton("Обратиться в поддержку"),
+		tgbotapi.NewKeyboardButton(BackButtonText),
+		tgbotapi.NewKeyboardButton(SupportButtonText),
 	),
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton("Инструкция пользователя"),
-		tgbotapi.NewKeyboardButton("Оставить обратную связь"),
+		tgbotapi.NewKeyboardButton(InstructionButtonText),
+		tgbotapi.NewKeyboardButton(FeedbackButtonText),
 	),
 )
 
 var selectBuildingMenu = tgbotapi.NewReplyKeyboard(
 	mapBuildingToKeyboardRow(model.AvailableBuildings...),
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton("Назад"),
+		tgbotapi.NewKeyboardButton(BackButtonText),
 	),
 )
 
 var backMenu = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton("Отменить"),
+		tgbotapi.NewKeyboardButton(CancelButtonText),
 	),
 )
 
 var confirmMenu = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton("Отменить"),
-		tgbotapi.NewKeyboardButton("Подтвердить"),
+		tgbotapi.NewKeyboardButton(CancelButtonText),
+		tgbotapi.NewKeyboardButton(ConfirmButtonText),
 	),
 )
 
