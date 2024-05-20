@@ -103,10 +103,5 @@ func sendMyOrders(handler *updateHandler, user *model.User) error {
 		}
 	}
 
-	orderMsg := tgbotapi.NewMessage(
-		chatID,
-		"это тупо тест функции",
-	)
-
-	return handler.sendMsg(orderMsg)
+	return nil
 }
