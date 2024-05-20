@@ -37,7 +37,7 @@ func main() {
 
 	for update := range updatesChannel {
 		if update.Message != nil {
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text) // TODO: move this to handler
 
 			handler.Handle(update)
 		}

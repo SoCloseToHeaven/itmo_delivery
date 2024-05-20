@@ -3,6 +3,7 @@ package telegram
 import (
 	"itmo_delivery/model"
 	"itmo_delivery/repository"
+	"log"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"gorm.io/gorm"
@@ -43,22 +44,9 @@ func (r *updateHandler) Handle(u tgbotapi.Update) {
 		return
 	}
 
-	_ = Events[user.State](r, user, u)
-
-}
-
-func (r *updateHandler) next(reply tgbotapi.MessageConfig, user *model.User, newState model.UserState) error {
-	if err := r.updateUserState(user, newState); err != nil {
-		return err
+	if err = CurrentEvents[user.State](r, user, u); err != nil {
+		log.Println(err.Error())
 	}
-
-	r.setStateKeyboard(user, &reply)
-
-	if _, err := r.Bot.Send(reply); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (r *updateHandler) updateUserState(user *model.User, newState model.UserState) error {
@@ -70,12 +58,31 @@ func (r *updateHandler) updateUserState(user *model.User, newState model.UserSta
 	return r.UserRepository.Update(user)
 }
 
-func (r *updateHandler) setStateKeyboard(user *model.User, msg *tgbotapi.MessageConfig) {
-	keyboard := StateToKeyboard[user.State]
+func (r *updateHandler) setStateKeyboard(state model.UserState, msg *tgbotapi.MessageConfig) {
+	keyboard := StateToKeyboard[state]
 	keyboard.ResizeKeyboard = true
 	keyboard.OneTimeKeyboard = true
 
-	msg.ReplyMarkup = StateToKeyboard[user.State]
+	msg.ReplyMarkup = StateToKeyboard[state]
+}
+
+func (r *updateHandler) sendErrMsg(user *model.User) error {
+	chatID := user.ChatID
+	state := user.State
+
+	reply := tgbotapi.NewMessage(chatID, ErrorMsg)
+
+	r.setStateKeyboard(state, &reply)
+
+	return r.sendMsg(reply)
+}
+
+func (r *updateHandler) sendMsg(msg tgbotapi.MessageConfig) error {
+	if _, err := r.Bot.Send(msg); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // TODO: Add transactions

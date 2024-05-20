@@ -41,7 +41,7 @@ var AvailableBuildings = []Building{
 	"Пер. Гривцова, 14-16",
 }
 
-func (r *Order) toString() string {
+func (r *Order) ToString() string {
 	return fmt.Sprintf(
 		"Здание: %s\nОписание:%s\nСостояние:%s\nДата создания:%s\n",
 		r.Place,

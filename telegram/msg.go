@@ -7,7 +7,7 @@ const (
 	ErrorMsg                     string = "Упс... Что-то пошло не так"
 	UnknownAction                string = "Неизвестное действие!"
 	SelectBuilding               string = "Выберите нужное здание в меню."
-	MyOrders                     string = "Мои заказы:"
+	MyOrders                     string = "Мои последние заказы"
 	ActiveOrders                 string = "Активные заказы:"
 	OrderConfirmMessageFormatted string = "Вы подтверждаете заказ? \n%s"
 	InputDescription             string = "Введите описание заказа:"
