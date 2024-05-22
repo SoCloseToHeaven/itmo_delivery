@@ -1,4 +1,4 @@
-package telegram
+package utils
 
 import "itmo_delivery/model"
 
@@ -16,6 +16,7 @@ const (
 	AboutBot                     string = "О боте"       // TODO: Нормальный текст о боте
 	MainMenu                            = "Главное меню" // TODO: Нормальный текст главного меню
 	Support                             = "Поддержечка"  // TODO: Нормальный текст поддержечки
+	NewOrderCreated                     = "Успешно создан новый заказ! \n%s"
 )
 
 var StateMessage = map[model.UserState]string{
