@@ -3,6 +3,7 @@ package telegram
 import (
 	"itmo_delivery/model"
 	"itmo_delivery/service"
+	"itmo_delivery/utils"
 	"log"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
@@ -61,7 +62,7 @@ func (r *updateHandler) sendErrMsg(user *model.User) error {
 	chatID := user.ChatID
 	state := user.State
 
-	reply := tgbotapi.NewMessage(chatID, ErrorMsg)
+	reply := tgbotapi.NewMessage(chatID, utils.ErrorMsg)
 
 	r.setStateKeyboard(state, &reply)
 

@@ -2,14 +2,10 @@ package telegram
 
 import (
 	"itmo_delivery/model"
+	"itmo_delivery/utils"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
-
-type TelegramChatID int64
-type TempOrders map[TelegramChatID]model.Order // map for creating temporary orders
-
-// var tempOrders = make(TempOrders)
 
 type Event func(handler *updateHandler, user *model.User, u tgbotapi.Update) error
 
@@ -47,7 +43,7 @@ func navigationOnly(handler *updateHandler, user *model.User, u tgbotapi.Update)
 		return handler.sendErrMsg(user)
 	}
 
-	msgText, found := StateMessage[nextState]
+	msgText, found := utils.StateMessage[nextState]
 
 	if !found {
 		return handler.sendErrMsg(user)
@@ -63,6 +59,7 @@ func navigationOnly(handler *updateHandler, user *model.User, u tgbotapi.Update)
 
 func moveToNextState(handler *updateHandler, reply tgbotapi.MessageConfig, user *model.User, newState model.UserState) error {
 	if err := handler.UserService.UpdateUserState(user, newState); err != nil {
+		_ = handler.sendErrMsg(user)
 		return err
 	}
 
@@ -83,7 +80,7 @@ func sendMyOrders(handler *updateHandler, user *model.User) error {
 	orders, err := handler.OrderService.GetLastOrderMessagesByUser(user, orderMaxPrintCount)
 
 	if err != nil {
-		handler.sendErrMsg(user)
+		_ = handler.sendErrMsg(user)
 		return err
 	}
 
