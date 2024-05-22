@@ -7,7 +7,7 @@ type User struct {
 	ChatID     int64 `gorm:"index"`
 	TelegramID int   `gorm:"index"`
 	State      UserState
-	ISU        uint64
+	// ISU        uint64
 }
 
 type UserState uint64

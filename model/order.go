@@ -17,7 +17,23 @@ type Order struct {
 	AssigneeChatID *int64   // intptr to allow null values
 }
 
+type TempOrderInfo struct {
+	State       OrderState
+	Description string
+	// ContactInfo    string
+	// Reward         string
+	Place Building
+}
+
 type OrderState uint64
+
+func MapTempToOrder(temp *TempOrderInfo) *Order {
+	return &Order{
+		Description: temp.Description,
+		State:       temp.State,
+		Place:       temp.Place,
+	}
+}
 
 const (
 	Active OrderState = iota
