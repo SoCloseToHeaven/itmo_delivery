@@ -62,7 +62,7 @@ func navigationOnly(handler *updateHandler, user *model.User, u tgbotapi.Update)
 }
 
 func moveToNextState(handler *updateHandler, reply tgbotapi.MessageConfig, user *model.User, newState model.UserState) error {
-	if err := handler.updateUserState(user, newState); err != nil {
+	if err := handler.UserService.UpdateUserState(user, newState); err != nil {
 		return err
 	}
 
@@ -77,31 +77,15 @@ func moveToNextState(handler *updateHandler, reply tgbotapi.MessageConfig, user 
 	return handler.sendMsg(reply)
 }
 
-const orderMaxPrintCount = 5
+const orderMaxPrintCount = 5 // TODO: move to bot config
 
 func sendMyOrders(handler *updateHandler, user *model.User) error {
-	chatID := user.ChatID
-
-	orders, err := handler.OrderRepository.GetByCreatorChatID(chatID)
+	orders, err := handler.OrderService.GetLastOrderMessagesByUser(user, orderMaxPrintCount)
 
 	if err != nil {
+		handler.sendErrMsg(user)
 		return err
 	}
 
-	for i, order := range *orders {
-		if i == orderMaxPrintCount {
-			break
-		}
-
-		orderMsg := tgbotapi.NewMessage(
-			chatID,
-			order.ToString(),
-		)
-
-		if err := handler.sendMsg(orderMsg); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return handler.sendMsg(*orders...)
 }

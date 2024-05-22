@@ -14,6 +14,7 @@ type OrderRepository interface {
 	Update(order *model.Order) error
 	Delete(order *model.Order) error
 	GetByCreatorChatID(chatID int64) (*[]model.Order, error)
+	GetLastOrdersByUser(user *model.User, count uint) (*[]model.Order, error)
 	DB() *gorm.DB
 }
 
@@ -59,6 +60,20 @@ func (r *orderRepository) Delete(order *model.Order) error {
 func (r *orderRepository) GetByCreatorChatID(chatID int64) (*[]model.Order, error) {
 	var orders []model.Order
 	if err := r.db.Where("creator_chat_id = ?", chatID).Find(&orders).Error; err != nil {
+		return nil, err
+	}
+	return &orders, nil
+}
+
+func (r *orderRepository) GetLastOrdersByUser(user *model.User, count uint) (*[]model.Order, error) {
+	orders := make([]model.Order, 0, count)
+	err := r.db.
+		Order("updated_at DESC").
+		Where("creator_chat_id = ?", user.ChatID).
+		Limit(int(count)).
+		Find(&orders).
+		Error
+	if err != nil {
 		return nil, err
 	}
 	return &orders, nil
