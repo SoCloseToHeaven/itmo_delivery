@@ -24,7 +24,7 @@ func main() {
 
 	db := MustInitializeDB()
 
-	handler := telegram.NewMessageHandler(db, bot)
+	handler := telegram.NewUpdateHandler(db, bot)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60

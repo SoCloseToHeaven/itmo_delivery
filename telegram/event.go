@@ -7,9 +7,9 @@ import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
 
-type Event func(handler *updateHandler, user *model.User, u tgbotapi.Update) error
+type Event func(handler UpdateHandler, user *model.User, u tgbotapi.Update) error
 
-type ChangeStateEvent func(handler *updateHandler, user *model.User) error
+type ChangeStateEvent func(handler UpdateHandler, user *model.User) error
 
 // CurrentState -> Possible Event
 var CurrentEvents = map[model.UserState]Event{
@@ -35,18 +35,18 @@ var ChangeStateEvents = map[model.UserState]ChangeStateEvent{
 	model.MyOrders: sendMyOrders,
 }
 
-func navigationOnly(handler *updateHandler, user *model.User, u tgbotapi.Update) error {
+func navigationOnly(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
 	chatID := u.Message.Chat.ID
 	nextState, found := Nav[user.State][u.Message.Text]
 
 	if !found {
-		return handler.sendErrMsg(user)
+		return handler.SendErrMsg(user)
 	}
 
 	msgText, found := utils.StateMessage[nextState]
 
 	if !found {
-		return handler.sendErrMsg(user)
+		return handler.SendErrMsg(user)
 	}
 
 	reply := tgbotapi.NewMessage(
@@ -57,9 +57,9 @@ func navigationOnly(handler *updateHandler, user *model.User, u tgbotapi.Update)
 	return moveToNextState(handler, reply, user, nextState)
 }
 
-func moveToNextState(handler *updateHandler, reply tgbotapi.MessageConfig, user *model.User, newState model.UserState) error {
-	if err := handler.UserService.UpdateUserState(user, newState); err != nil {
-		_ = handler.sendErrMsg(user)
+func moveToNextState(handler UpdateHandler, reply tgbotapi.MessageConfig, user *model.User, newState model.UserState) error {
+	if err := handler.UserService().UpdateUserState(user, newState); err != nil {
+		_ = handler.SendErrMsg(user)
 		return err
 	}
 
@@ -69,20 +69,20 @@ func moveToNextState(handler *updateHandler, reply tgbotapi.MessageConfig, user 
 		}
 	}
 
-	handler.setStateKeyboard(user.State, &reply)
+	handler.SetStateKeyboard(user.State, &reply)
 
-	return handler.sendMsg(reply)
+	return handler.SendMsg(reply)
 }
 
 const orderMaxPrintCount = 5 // TODO: move to bot config
 
-func sendMyOrders(handler *updateHandler, user *model.User) error {
-	orders, err := handler.OrderService.GetLastOrderMessagesByUser(user, orderMaxPrintCount)
+func sendMyOrders(handler UpdateHandler, user *model.User) error {
+	orders, err := handler.OrderService().GetLastOrderMessagesByUser(user, orderMaxPrintCount)
 
 	if err != nil {
-		_ = handler.sendErrMsg(user)
+		_ = handler.SendErrMsg(user)
 		return err
 	}
 
-	return handler.sendMsg(*orders...)
+	return handler.SendMsg(*orders...)
 }

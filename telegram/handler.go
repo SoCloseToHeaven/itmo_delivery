@@ -11,22 +11,29 @@ import (
 )
 
 type updateHandler struct {
-	DB           *gorm.DB
-	UserService  service.UserService
-	OrderService service.OrderService
-	Bot          *tgbotapi.BotAPI
+	db           *gorm.DB
+	userService  service.UserService
+	orderService service.OrderService
+	bot          *tgbotapi.BotAPI
 }
 
-type MessageHandler interface {
+type UpdateHandler interface {
 	Handle(u tgbotapi.Update)
+	SetStateKeyboard(state model.UserState, msg *tgbotapi.MessageConfig)
+	SendErrMsg(user *model.User) error
+	SendMsg(messages ...tgbotapi.MessageConfig) error
+	OrderService() service.OrderService
+	UserService() service.UserService
+	Bot() *tgbotapi.BotAPI
+	DB() *gorm.DB
 }
 
-func NewMessageHandler(db *gorm.DB, bot *tgbotapi.BotAPI) MessageHandler {
+func NewUpdateHandler(db *gorm.DB, bot *tgbotapi.BotAPI) UpdateHandler {
 	handler := &updateHandler{
-		DB:           db,
-		UserService:  service.NewUserService(db),
-		OrderService: service.NewOrderService(db),
-		Bot:          bot,
+		db:           db,
+		userService:  service.NewUserService(db),
+		orderService: service.NewOrderService(db),
+		bot:          bot,
 	}
 
 	return handler
@@ -39,7 +46,7 @@ func (r *updateHandler) Handle(u tgbotapi.Update) {
 		return
 	}
 
-	user, err := r.UserService.GetOrCreateUser(u)
+	user, err := r.UserService().GetOrCreateUser(u)
 
 	if err != nil {
 		return
@@ -50,7 +57,7 @@ func (r *updateHandler) Handle(u tgbotapi.Update) {
 	}
 }
 
-func (r *updateHandler) setStateKeyboard(state model.UserState, msg *tgbotapi.MessageConfig) {
+func (r *updateHandler) SetStateKeyboard(state model.UserState, msg *tgbotapi.MessageConfig) {
 	keyboard := StateToKeyboard[state]
 	keyboard.ResizeKeyboard = true
 	keyboard.OneTimeKeyboard = true
@@ -58,24 +65,39 @@ func (r *updateHandler) setStateKeyboard(state model.UserState, msg *tgbotapi.Me
 	msg.ReplyMarkup = StateToKeyboard[state]
 }
 
-func (r *updateHandler) sendErrMsg(user *model.User) error {
+func (r *updateHandler) SendErrMsg(user *model.User) error {
 	chatID := user.ChatID
 	state := user.State
 
 	reply := tgbotapi.NewMessage(chatID, utils.ErrorMsg)
 
-	r.setStateKeyboard(state, &reply)
+	r.SetStateKeyboard(state, &reply)
 
-	return r.sendMsg(reply)
+	return r.SendMsg(reply)
 }
 
-func (r *updateHandler) sendMsg(messages ...tgbotapi.MessageConfig) error {
+func (r *updateHandler) SendMsg(messages ...tgbotapi.MessageConfig) error {
 
 	for _, msg := range messages {
-		if _, err := r.Bot.Send(msg); err != nil {
+		if _, err := r.Bot().Send(msg); err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func (r *updateHandler) OrderService() service.OrderService {
+	return r.orderService
+}
+
+func (r *updateHandler) UserService() service.UserService {
+	return r.userService
+}
+
+func (r *updateHandler) Bot() *tgbotapi.BotAPI {
+	return r.bot
+}
+func (r *updateHandler) DB() *gorm.DB {
+	return r.db
 }
