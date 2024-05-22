@@ -14,6 +14,7 @@ type OrderRepository interface {
 	Update(order *model.Order) error
 	Delete(order *model.Order) error
 	GetByCreatorChatID(chatID int64) (*[]model.Order, error)
+	DB() *gorm.DB
 }
 
 type orderRepository struct {
@@ -61,4 +62,8 @@ func (r *orderRepository) GetByCreatorChatID(chatID int64) (*[]model.Order, erro
 		return nil, err
 	}
 	return &orders, nil
+}
+
+func (r *orderRepository) DB() *gorm.DB {
+	return r.db
 }

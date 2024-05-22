@@ -13,6 +13,7 @@ type UserRepository interface {
 	GetByTelegramID(tgID int64) (*model.User, error)
 	Update(user *model.User) error
 	Delete(user *model.User) error
+	DB() *gorm.DB
 }
 
 type userRepository struct {
@@ -57,4 +58,8 @@ func (r *userRepository) GetByTelegramID(tgID int64) (*model.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (r *userRepository) DB() *gorm.DB {
+	return r.db
 }
