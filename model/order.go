@@ -27,11 +27,12 @@ type TempOrderInfo struct {
 
 type OrderState uint64
 
-func MapTempToOrder(temp *TempOrderInfo) *Order {
+func (temp *TempOrderInfo) ToOrder(user *User) *Order {
 	return &Order{
-		Description: temp.Description,
-		State:       temp.State,
-		Place:       temp.Place,
+		Description:   temp.Description,
+		State:         temp.State,
+		Place:         temp.Place,
+		CreatorChatID: user.ChatID,
 	}
 }
 

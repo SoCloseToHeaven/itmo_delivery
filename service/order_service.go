@@ -54,8 +54,7 @@ func (r *orderService) GetLastOrderMessagesByUser(user *model.User, count uint) 
 }
 
 func (r *orderService) CreateNewOrderByUser(user *model.User) (*tgbotapi.MessageConfig, error) {
-	temp := r.GetTempOrderByUser(user)
-	order := model.MapTempToOrder(temp)
+	order := r.GetTempOrderByUser(user).ToOrder(user)
 
 	if err := r.OrderRepository.Create(order); err != nil {
 		return nil, err
