@@ -12,9 +12,9 @@ type Order struct {
 	Description string
 	// ContactInfo    string
 	// Reward         string
-	Place          Building `gorm:"index"`
-	CreatorChatID  int64    `gorm:"index"`
-	AssigneeChatID *int64   // intptr to allow null values
+	Place          string `gorm:"index"`
+	CreatorChatID  int64  `gorm:"index"`
+	AssigneeChatID *int64 // intptr to allow null values
 }
 
 type TempOrderInfo struct {
@@ -22,7 +22,7 @@ type TempOrderInfo struct {
 	Description string
 	// ContactInfo    string
 	// Reward         string
-	Place Building
+	Place string
 }
 
 type OrderState uint64
@@ -47,9 +47,7 @@ var OrderToText = map[OrderState]string{
 	GivenToCourier: "Передан курьеру",
 }
 
-type Building string
-
-var AvailableBuildings = []Building{
+var AvailableBuildings = []string{
 	"Кронверкский пр. 49",
 	"Ул. Ломоносова, 9",
 	"Биржевая линия, 14-16",
