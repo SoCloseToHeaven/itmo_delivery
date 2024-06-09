@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"errors"
 	"itmo_delivery/model"
 	"itmo_delivery/utils"
 
@@ -24,7 +25,7 @@ var CurrentEvents = map[model.UserState]Event{
 
 	model.NewOrderSelectBuilding:   selectBuildingEvent,
 	model.NewOrderInputDescription: InputDescriptionEvent,
-	model.NewOrderConfirm:          navigationOnlyEvent,
+	model.NewOrderConfirm:          ConfirmOrderEvent,
 
 	model.CourierSelectBuilding: navigationOnlyEvent,
 	model.CourierActiveOrders:   navigationOnlyEvent,
@@ -57,10 +58,6 @@ func navigationOnlyEvent(handler UpdateHandler, user *model.User, u tgbotapi.Upd
 		return handler.SendErrMsg(user)
 	}
 
-	if !found {
-		return handler.SendErrMsg(user)
-	}
-
 	return moveToNextState(handler, nil, user, nextState)
 }
 
@@ -75,12 +72,10 @@ func moveToNextState(handler UpdateHandler, reply *tgbotapi.MessageConfig, user 
 	}
 
 	if event, found := ChangeStateEvents[newState]; found {
-		if err := event(handler, user); err != nil {
-			return err
-		}
+		return event(handler, user)
 	}
 
-	return nil
+	return errors.New("event not found")
 }
 
 const orderMaxPrintCount = 5 // TODO: move to bot config

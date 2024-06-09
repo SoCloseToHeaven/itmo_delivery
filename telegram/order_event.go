@@ -98,3 +98,37 @@ func InputDescriptionEvent(handler UpdateHandler, user *model.User, u tgbotapi.U
 
 	return moveToNextState(handler, &reply, user, model.NewOrderConfirm)
 }
+
+func ConfirmOrderEvent(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
+	text := u.Message.Text
+	var reply tgbotapi.MessageConfig
+
+	nextState, found := Nav[user.State][text]
+
+	if !found {
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.UnknownAction,
+		)
+		return moveToNextState(handler, &reply, user, user.State)
+	}
+
+	tempOrder := handler.OrderService().GetTempOrderByUser(user)
+
+	if tempOrder == nil {
+		return moveToNextState(handler, nil, user, model.Main)
+	}
+
+	orderMessage, err := handler.OrderService().CreateNewOrderByUser(user)
+
+	if err != nil {
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.ErrorMsg,
+		)
+		return moveToNextState(handler, &reply, user, model.Main)
+	}
+
+	return moveToNextState(handler, orderMessage, user, nextState)
+
+}
