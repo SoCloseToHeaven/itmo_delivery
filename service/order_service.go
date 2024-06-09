@@ -13,13 +13,18 @@ import (
 type OrderService interface {
 	GetLastOrderMessagesByUser(user *model.User, count uint) (*[]tgbotapi.MessageConfig, error)
 	CreateNewOrderByUser(user *model.User) (*tgbotapi.MessageConfig, error)
+
 	GetTempOrderByUser(user *model.User) *model.TempOrderInfo
 	SetTempOrderByUser(user *model.User, temp model.TempOrderInfo)
+
+	GetCourierBuilding(user *model.User) *string
+	SetCourierBuilding(user *model.User, building string)
 }
 
 type orderService struct {
-	OrderRepository repository.OrderRepository
-	TempOrders      TempOrders
+	OrderRepository   repository.OrderRepository
+	TempOrders        TempOrders
+	CourierToBuilding map[int64]string
 }
 
 type TempOrders map[int64]model.TempOrderInfo // map for creating temporary orders
@@ -77,4 +82,15 @@ func (r *orderService) GetTempOrderByUser(user *model.User) *model.TempOrderInfo
 
 func (r *orderService) SetTempOrderByUser(user *model.User, temp model.TempOrderInfo) {
 	r.TempOrders[user.ChatID] = temp
+}
+
+func (r *orderService) GetCourierBuilding(user *model.User) *string {
+	if building, found := r.CourierToBuilding[user.ChatID]; found {
+		return &building
+	}
+	return nil
+}
+
+func (r *orderService) SetCourierBuilding(user *model.User, building string) {
+	r.CourierToBuilding[user.ChatID] = building
 }
