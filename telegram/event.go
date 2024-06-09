@@ -23,11 +23,11 @@ var CurrentEvents = map[model.UserState]Event{
 	// тут какая-то хуйня с порядком сообщений, я пиздец намудрил, надо это как-то адекватнее сделать
 	model.MyOrders: navigationOnlyEvent,
 
-	model.NewOrderSelectBuilding:   selectBuildingEvent,
+	model.NewOrderSelectBuilding:   SelectBuildingEvent,
 	model.NewOrderInputDescription: InputDescriptionEvent,
 	model.NewOrderConfirm:          ConfirmOrderEvent,
 
-	model.CourierSelectBuilding: navigationOnlyEvent,
+	model.CourierSelectBuilding: CourierSelectBuildingEvent,
 	model.CourierActiveOrders:   navigationOnlyEvent,
 	model.CourierConfirmOrder:   navigationOnlyEvent,
 }
@@ -68,7 +68,9 @@ func moveToNextState(handler UpdateHandler, reply *tgbotapi.MessageConfig, user 
 	}
 
 	if reply != nil {
-		return handler.SendMsg(*reply)
+		if err := handler.SendMsg(*reply); err != nil {
+			return err
+		}
 	}
 
 	if event, found := ChangeStateEvents[newState]; found {

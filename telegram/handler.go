@@ -50,6 +50,7 @@ func (r *updateHandler) Handle(u tgbotapi.Update) {
 	user, err := r.UserService().GetOrCreateUser(u)
 
 	if err != nil {
+		log.Println(err.Error())
 		return
 	}
 

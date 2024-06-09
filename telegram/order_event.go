@@ -9,11 +9,11 @@ import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
 
-func selectBuildingEvent(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
+func SelectBuildingEvent(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
 	text := u.Message.Text
 	var reply tgbotapi.MessageConfig
 
-	nextState, found := Nav[user.State][u.Message.Text]
+	nextState, found := Nav[user.State][text]
 
 	if !found {
 		reply = tgbotapi.NewMessage(
@@ -27,6 +27,7 @@ func selectBuildingEvent(handler UpdateHandler, user *model.User, u tgbotapi.Upd
 	for _, elem := range model.AvailableBuildings {
 		if text == elem {
 			building = &elem
+			break
 		}
 	}
 
