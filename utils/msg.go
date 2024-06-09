@@ -11,6 +11,7 @@ const (
 	SuccessfullySelectedBuildingFormatted        = "Успешно выбрано здание: %s"
 	SuccessfullyDescriptionInputFormatted        = "Успешно введено описание: %s"
 	MyOrders                              string = "Мои последние заказы"
+	NoOrders                                     = "Упс... Кажется у вас ещё не было заказов!"
 	ActiveOrders                          string = "Активные заказы:"
 	OrderConfirmMessageFormatted          string = "Вы подтверждаете заказ? \n%s"
 	InputDescription                      string = "Введите описание заказа:"

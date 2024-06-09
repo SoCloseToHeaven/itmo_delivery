@@ -93,6 +93,15 @@ func sendMyOrders(handler UpdateHandler, user *model.User) error {
 		return err
 	}
 
+	if len(*orders) == 0 {
+		msg := tgbotapi.NewMessage(
+			user.ChatID,
+			utils.NoOrders,
+		)
+
+		return handler.SendMsgWithKeyboard(user, msg)
+	}
+
 	return handler.SendMsgWithKeyboard(user, *orders...)
 }
 

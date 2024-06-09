@@ -91,7 +91,7 @@ func mapAvailableBuildings(nextState model.UserState, prevState model.UserState)
 	}
 
 	for _, building := range model.AvailableBuildings {
-		mapped[string(building)] = nextState
+		mapped[building] = nextState
 	}
 
 	return mapped
