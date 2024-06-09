@@ -10,7 +10,7 @@ type OrderRepository interface {
 	Create(order *model.Order) error
 	GetByID(id uint) (*model.Order, error)
 	GetByState(state model.OrderState) (*[]model.Order, error)
-	GetByPlace(place model.Building) (*[]model.Order, error)
+	GetByPlace(place string) (*[]model.Order, error)
 	Update(order *model.Order) error
 	Delete(order *model.Order) error
 	GetByCreatorChatID(chatID int64) (*[]model.Order, error)
@@ -43,7 +43,7 @@ func (r *orderRepository) GetByState(state model.OrderState) (*[]model.Order, er
 	}
 	return &order, nil
 }
-func (r *orderRepository) GetByPlace(place model.Building) (*[]model.Order, error) {
+func (r *orderRepository) GetByPlace(place string) (*[]model.Order, error) {
 	var order []model.Order
 	if err := r.db.Where("place = ?", place).Find(&order).Error; err != nil {
 		return nil, err

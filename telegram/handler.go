@@ -26,6 +26,7 @@ type UpdateHandler interface {
 	UserService() service.UserService
 	Bot() *tgbotapi.BotAPI
 	DB() *gorm.DB
+	SendMsgWithKeyboard(user *model.User, messages ...tgbotapi.MessageConfig) error
 }
 
 func NewUpdateHandler(db *gorm.DB, bot *tgbotapi.BotAPI) UpdateHandler {
@@ -100,4 +101,16 @@ func (r *updateHandler) Bot() *tgbotapi.BotAPI {
 }
 func (r *updateHandler) DB() *gorm.DB {
 	return r.db
+}
+
+func (r *updateHandler) SendMsgWithKeyboard(user *model.User, messages ...tgbotapi.MessageConfig) error {
+
+	for _, msg := range messages {
+		r.SetStateKeyboard(user.State, &msg)
+		if _, err := r.Bot().Send(msg); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

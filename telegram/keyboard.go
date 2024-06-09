@@ -19,7 +19,7 @@ const (
 	InstructionButtonText = "Инструкция пользователя"
 )
 
-func mapBuildingToKeyboardRow(building ...model.Building) []tgbotapi.KeyboardButton {
+func mapBuildingToKeyboardRow(building ...string) []tgbotapi.KeyboardButton {
 	newArr := []tgbotapi.KeyboardButton{}
 	for _, elem := range building {
 		newArr = append(newArr, tgbotapi.NewKeyboardButton(string(elem)))
