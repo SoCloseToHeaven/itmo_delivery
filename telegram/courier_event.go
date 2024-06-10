@@ -8,7 +8,6 @@ import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
 
-// TODO: fix issues with moving to the next state
 func CourierSelectBuildingEvent(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
 	text := u.Message.Text
 
@@ -48,4 +47,30 @@ func CourierSelectBuildingEvent(handler UpdateHandler, user *model.User, u tgbot
 	)
 
 	return moveToNextState(handler, &reply, user, nextState)
+}
+
+func SendActiveOrdersChangeEvent(handler UpdateHandler, user *model.User) error {
+	place := handler.OrderService().GetCourierBuilding(user)
+
+	var reply tgbotapi.MessageConfig
+
+	if place == nil {
+		return handler.SendErrMsg(user)
+	}
+
+	orders, err := handler.OrderService().GetActiveOrderMessagesByPlace(user, *place)
+
+	if err != nil || orders == nil {
+		return handler.SendErrMsg(user)
+	}
+
+	if len(*orders) == 0 {
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.NoActiveOrders,
+		)
+		return handler.SendMsgWithKeyboard(user, reply)
+	}
+
+	return handler.SendMsgWithKeyboard(user, *orders...)
 }

@@ -47,7 +47,7 @@ var ChangeStateEvents = map[model.UserState]ChangeStateEvent{
 	model.NewOrderConfirm:          sendStateMsg,
 
 	model.CourierSelectBuilding: sendStateMsg,
-	model.CourierActiveOrders:   sendStateMsg,
+	model.CourierActiveOrders:   SendActiveOrdersChangeEvent,
 	model.CourierConfirmOrder:   sendStateMsg,
 }
 

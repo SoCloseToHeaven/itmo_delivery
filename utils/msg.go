@@ -23,6 +23,7 @@ const (
 	Support                                      = "Поддержечка"  // TODO: Нормальный текст поддержечки
 	NewOrderCreated                              = "Успешно создан новый заказ! \n%s"
 	BackButtonClicked                            = "Переходим назад..."
+	NoActiveOrders                               = "Упс! Кажется в этом здании нет активных заказов!"
 )
 
 var StateMessage = map[model.UserState]string{
