@@ -11,6 +11,7 @@ type OrderRepository interface {
 	GetByID(id uint) (*model.Order, error)
 	GetByState(state model.OrderState) (*[]model.Order, error)
 	GetByPlace(place string) (*[]model.Order, error)
+	GetByPlaceAndState(place string, state model.OrderState) (*[]model.Order, error)
 	Update(order *model.Order) error
 	Delete(order *model.Order) error
 	GetByCreatorChatID(chatID int64) (*[]model.Order, error)
@@ -81,4 +82,12 @@ func (r *orderRepository) GetLastOrdersByUser(user *model.User, count uint) (*[]
 
 func (r *orderRepository) DB() *gorm.DB {
 	return r.db
+}
+
+func (r *orderRepository) GetByPlaceAndState(place string, state model.OrderState) (*[]model.Order, error) {
+	var order []model.Order
+	if err := r.db.Where("place = ?", place).Where("state = ?", state).Find(&order).Error; err != nil {
+		return nil, err
+	}
+	return &order, nil
 }
