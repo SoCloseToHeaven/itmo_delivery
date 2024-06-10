@@ -14,6 +14,7 @@ type OrderService interface {
 	GetLastOrderMessagesByUser(user *model.User, count uint) (*[]tgbotapi.MessageConfig, error)
 	GetActiveOrderMessagesByPlace(user *model.User, place string) (*[]tgbotapi.MessageConfig, error)
 	CreateNewOrderByUser(user *model.User) (*tgbotapi.MessageConfig, error)
+	AssigneeUserToOrder(user *model.User, id uint) *model.Order
 
 	GetTempOrderByUser(user *model.User) *model.TempOrderInfo
 	SetTempOrderByUser(user *model.User, temp model.TempOrderInfo)
@@ -117,4 +118,33 @@ func (r *orderService) GetActiveOrderMessagesByPlace(user *model.User, place str
 	}
 
 	return &messages, nil
+}
+
+func (r *orderService) AssigneeUserToOrder(user *model.User, id uint) *model.Order {
+
+	tx := r.OrderRepository.DB().Begin()
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			tx.Rollback()
+		}
+	}()
+
+	order, err := r.OrderRepository.GetByID(id)
+
+	if err != nil || order == nil {
+		return nil
+	}
+
+	order.AssigneeChatID = &user.ChatID
+	order.State = model.GivenToCourier
+
+	if err := tx.Save(order); err != nil {
+		tx.Rollback()
+		return nil
+	}
+
+	tx.Commit()
+
+	return order
 }
