@@ -51,7 +51,7 @@ func (r *orderService) GetLastOrderMessagesByUser(user *model.User, count uint) 
 	for _, order := range *orders {
 		orderMsg := tgbotapi.NewMessage(
 			chatID,
-			order.ToString(),
+			order.ToStringWithID(),
 		)
 
 		messages = append(messages, orderMsg)
@@ -69,7 +69,7 @@ func (r *orderService) CreateNewOrderByUser(user *model.User) (*tgbotapi.Message
 
 	reply := tgbotapi.NewMessage(
 		order.CreatorChatID,
-		fmt.Sprintf(utils.NewOrderCreated, order.ToString()),
+		fmt.Sprintf(utils.NewOrderCreated, order.ToStringWithID()),
 	)
 
 	return &reply, nil
@@ -110,7 +110,7 @@ func (r *orderService) GetActiveOrderMessagesByPlace(user *model.User, place str
 	for _, order := range *orders {
 		orderMsg := tgbotapi.NewMessage(
 			chatID,
-			order.ToString(),
+			order.ToStringWithID(),
 		)
 
 		messages = append(messages, orderMsg)

@@ -58,7 +58,18 @@ var AvailableBuildings = []string{
 
 func (r *Order) ToString() string {
 	return fmt.Sprintf(
-		"Здание: %s\nОписание:%s\nСостояние:%s\nДата создания:%s\n",
+		"Здание: %s\nОписание: %s\nСостояние: %s\nДата создания: %s\n",
+		r.Place,
+		r.Description,
+		OrderToText[r.State],
+		r.CreatedAt.String(),
+	)
+}
+
+func (r *Order) ToStringWithID() string {
+	return fmt.Sprintf(
+		"ID: %d\nЗдание: %s\nОписание: %s\nСостояние: %s\nДата создания: %s\n",
+		r.ID,
 		r.Place,
 		r.Description,
 		OrderToText[r.State],

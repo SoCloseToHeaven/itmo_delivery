@@ -72,5 +72,27 @@ func SendActiveOrdersChangeEvent(handler UpdateHandler, user *model.User) error 
 		return handler.SendMsgWithKeyboard(user, reply)
 	}
 
-	return handler.SendMsgWithKeyboard(user, *orders...)
+	_ = handler.SendMsgWithKeyboard(user, *orders...)
+
+	reply = tgbotapi.NewMessage(
+		user.ChatID,
+		utils.CourierSelectOrderDescription,
+	)
+
+	return handler.SendMsgWithKeyboard(user, reply)
 }
+
+// func CourierSelectOrderEvent(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
+// 	text := u.Message.Text
+
+// 	var reply tgbotapi.MessageConfig
+
+// 	if nextState, found := Nav[user.State][text]; found {
+// 		reply = tgbotapi.NewMessage(
+// 			user.ChatID,
+// 			utils.BackButtonClicked,
+// 		)
+// 		return moveToNextState(handler, &reply, user, nextState)
+// 	}
+
+// }

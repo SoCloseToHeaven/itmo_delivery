@@ -24,6 +24,7 @@ const (
 	NewOrderCreated                              = "Успешно создан новый заказ! \n%s"
 	BackButtonClicked                            = "Переходим назад..."
 	NoActiveOrders                               = "Упс! Кажется в этом здании нет активных заказов!"
+	CourierSelectOrderDescription                = "Введите ID заказа, который вы хотите выбрать, или вернитесь обратно."
 )
 
 var StateMessage = map[model.UserState]string{
