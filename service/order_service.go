@@ -12,6 +12,7 @@ import (
 
 type OrderService interface {
 	GetLastOrderMessagesByUser(user *model.User, count uint) (*[]tgbotapi.MessageConfig, error)
+	GetActiveOrderMessagesByPlace(user *model.User, place string) (*[]tgbotapi.MessageConfig, error)
 	CreateNewOrderByUser(user *model.User) (*tgbotapi.MessageConfig, error)
 
 	GetTempOrderByUser(user *model.User) *model.TempOrderInfo
@@ -94,4 +95,26 @@ func (r *orderService) GetCourierBuilding(user *model.User) *string {
 
 func (r *orderService) SetCourierBuilding(user *model.User, building string) {
 	r.CourierToBuilding[user.ChatID] = building
+}
+
+func (r *orderService) GetActiveOrderMessagesByPlace(user *model.User, place string) (*[]tgbotapi.MessageConfig, error) {
+	chatID := user.ChatID
+
+	orders, err := r.OrderRepository.GetByPlaceAndState(place, model.Active)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var messages []tgbotapi.MessageConfig
+	for _, order := range *orders {
+		orderMsg := tgbotapi.NewMessage(
+			chatID,
+			order.ToString(),
+		)
+
+		messages = append(messages, orderMsg)
+	}
+
+	return &messages, nil
 }
