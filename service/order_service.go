@@ -31,8 +31,9 @@ type TempOrders map[int64]model.TempOrderInfo // map for creating temporary orde
 
 func NewOrderService(db *gorm.DB) OrderService {
 	return &orderService{
-		OrderRepository: repository.NewOrderRepository(db),
-		TempOrders:      make(TempOrders),
+		OrderRepository:   repository.NewOrderRepository(db),
+		TempOrders:        make(TempOrders),
+		CourierToBuilding: make(map[int64]string),
 	}
 }
 
