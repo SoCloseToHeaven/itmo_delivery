@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"itmo_delivery/model"
 	"itmo_delivery/utils"
+	"log"
+	"strconv"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
@@ -82,17 +84,87 @@ func SendActiveOrdersChangeEvent(handler UpdateHandler, user *model.User) error 
 	return handler.SendMsgWithKeyboard(user, reply)
 }
 
-// func CourierSelectOrderEvent(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
-// 	text := u.Message.Text
+func CourierSelectOrderEvent(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
+	text := u.Message.Text
 
-// 	var reply tgbotapi.MessageConfig
+	var reply tgbotapi.MessageConfig
 
-// 	if nextState, found := Nav[user.State][text]; found {
-// 		reply = tgbotapi.NewMessage(
-// 			user.ChatID,
-// 			utils.BackButtonClicked,
-// 		)
-// 		return moveToNextState(handler, &reply, user, nextState)
-// 	}
+	if nextState, found := Nav[user.State][text]; found {
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.BackButtonClicked,
+		)
+		return moveToNextState(handler, &reply, user, nextState)
+	}
 
-// }
+	id, err := strconv.ParseUint(text, 10, 64)
+
+	if err != nil {
+		log.Println(err.Error())
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.ErrorMsg,
+		)
+		return moveToNextState(handler, &reply, user, user.State)
+	}
+
+	order := handler.OrderService().AssigneeUserToOrder(user, uint(id))
+
+	if order == nil {
+		log.Println("CourierSelectEvent -> order is nil")
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.ErrorMsg,
+		)
+		return moveToNextState(handler, &reply, user, user.State)
+	}
+
+	creatorChatID := order.CreatorChatID
+	assigneeChatID := order.AssigneeChatID
+
+	creatorChat, err := handler.Bot().GetChat(tgbotapi.ChatConfig{ChatID: creatorChatID})
+
+	if err != nil {
+		log.Println(err.Error())
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.ErrorMsg,
+		)
+		return moveToNextState(handler, &reply, user, user.State)
+	}
+
+	assigneeChat, err := handler.Bot().GetChat(tgbotapi.ChatConfig{ChatID: *assigneeChatID})
+
+	if err != nil {
+		log.Println(err.Error())
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.ErrorMsg,
+		)
+		return moveToNextState(handler, &reply, user, user.State)
+	}
+
+	orderCreatorReply := tgbotapi.NewMessage(
+		creatorChatID,
+		fmt.Sprintf(utils.YourOrderTakenFormatted, order.ToStringWithID(), assigneeChat.UserName), // TODO: add checking if Username is present
+	)
+
+	creatorUser := handler.UserService().GetByChatID(creatorChatID)
+
+	if creatorUser == nil {
+		reply = tgbotapi.NewMessage(
+			user.ChatID,
+			utils.ErrorMsg,
+		)
+		return moveToNextState(handler, &reply, user, model.Main)
+	}
+
+	_ = handler.SendMsgWithKeyboard(creatorUser, orderCreatorReply)
+
+	orderAssigneeReply := tgbotapi.NewMessage(
+		*assigneeChatID,
+		fmt.Sprintf(utils.CourierOrderTakenFormatted, order.ToStringWithID(), creatorChat.UserName), // TODO: add checking if Username is present
+	)
+
+	return moveToNextState(handler, &orderAssigneeReply, user, model.Main)
+}

@@ -10,6 +10,8 @@ const (
 	IncorrectBuilding                            = "Неверное название здания! Попробуйте ещё раз."
 	SuccessfullySelectedBuildingFormatted        = "Успешно выбрано здание: %s"
 	SuccessfullyDescriptionInputFormatted        = "Успешно введено описание: %s"
+	YourOrderTakenFormatted                      = "Ваш заказ: %s\nБыл взят курьером: @%s\nСвяжитесь с ним для уточнения информации."
+	CourierOrderTakenFormatted                   = "Вы взяли заказ: %s\nЗаказчик: @%s\nСвяжитесь с ним для уточнения информации."
 	MyOrders                              string = "Мои последние заказы"
 	NoOrders                                     = "Упс... Кажется у вас ещё не было заказов!"
 	ActiveOrders                          string = "Активные заказы:"

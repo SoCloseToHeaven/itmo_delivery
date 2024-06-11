@@ -28,7 +28,7 @@ var CurrentEvents = map[model.UserState]Event{
 	model.NewOrderConfirm:          ConfirmOrderEvent,
 
 	model.CourierSelectBuilding: CourierSelectBuildingEvent,
-	model.CourierActiveOrders:   navigationOnlyEvent,
+	model.CourierActiveOrders:   CourierSelectOrderEvent,
 	model.CourierConfirmOrder:   navigationOnlyEvent,
 }
 
