@@ -114,6 +114,10 @@ func ConfirmOrderEvent(handler UpdateHandler, user *model.User, u tgbotapi.Updat
 		return moveToNextState(handler, &reply, user, user.State)
 	}
 
+	if found && text == CancelButtonText {
+		return moveToNextState(handler, nil, user, model.Main)
+	}
+
 	tempOrder := handler.OrderService().GetTempOrderByUser(user)
 
 	if tempOrder == nil {
@@ -132,4 +136,23 @@ func ConfirmOrderEvent(handler UpdateHandler, user *model.User, u tgbotapi.Updat
 
 	return moveToNextState(handler, orderMessage, user, nextState)
 
+}
+
+func SendConfirmMessageEvent(handler UpdateHandler, user *model.User) error {
+	chatID := user.ChatID
+
+	tempOrder := handler.OrderService().GetTempOrderByUser(user)
+
+	if tempOrder == nil {
+		return handler.SendErrMsg(user)
+	}
+
+	fmtMessage := fmt.Sprintf(utils.OrderConfirmMessageFormatted, tempOrder.ToOrder(user).ToString())
+
+	reply := tgbotapi.NewMessage(
+		chatID,
+		fmtMessage,
+	)
+
+	return handler.SendMsgWithKeyboard(user, reply)
 }

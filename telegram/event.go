@@ -48,7 +48,7 @@ var ChangeStateEvents = map[model.UserState]ChangeStateEvent{
 
 	model.CourierSelectBuilding: sendStateMsg,
 	model.CourierActiveOrders:   SendActiveOrdersChangeEvent,
-	model.CourierConfirmOrder:   sendStateMsg,
+	model.CourierConfirmOrder:   SendConfirmMessageEvent,
 }
 
 func navigationOnlyEvent(handler UpdateHandler, user *model.User, u tgbotapi.Update) error {
