@@ -5,6 +5,7 @@ import (
 	"itmo_delivery/model"
 	"itmo_delivery/repository"
 	"itmo_delivery/utils"
+	"log"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"gorm.io/gorm"
@@ -122,29 +123,24 @@ func (r *orderService) GetActiveOrderMessagesByPlace(user *model.User, place str
 
 func (r *orderService) AssigneeUserToOrder(user *model.User, id uint) *model.Order {
 
-	tx := r.OrderRepository.DB().Begin()
-
-	defer func() {
-		if rec := recover(); rec != nil {
-			tx.Rollback()
-		}
-	}()
-
 	order, err := r.OrderRepository.GetByID(id)
 
-	if err != nil || order == nil {
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+
+	if order == nil {
 		return nil
 	}
 
 	order.AssigneeChatID = &user.ChatID
 	order.State = model.GivenToCourier
 
-	if err := tx.Save(order); err != nil {
-		tx.Rollback()
+	if err := r.OrderRepository.Update(order); err != nil {
+		log.Println(err.Error())
 		return nil
 	}
-
-	tx.Commit()
 
 	return order
 }
