@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"itmo_delivery/model"
 	"itmo_delivery/repository"
@@ -63,8 +64,13 @@ func (r *orderService) GetLastOrderMessagesByUser(user *model.User, count uint) 
 }
 
 func (r *orderService) CreateNewOrderByUser(user *model.User) (*tgbotapi.MessageConfig, error) {
-	order := r.GetTempOrderByUser(user).ToOrder(user)
+	tempOrder := r.GetTempOrderByUser(user)
 
+	if tempOrder == nil {
+		return nil, errors.New("temp order not found")
+	}
+
+	order := tempOrder.ToOrder(user)
 	if err := r.OrderRepository.Create(order); err != nil {
 		return nil, err
 	}
