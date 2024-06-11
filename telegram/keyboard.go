@@ -8,7 +8,7 @@ import (
 
 const (
 	NewOrderButtonText    = "Новый заказ"
-	WatchOrdersButtonText = "Посмотреть заказы(Курьер)"
+	WatchOrdersButtonText = "Взять заказ"
 	AboutBotButtonText    = "О боте"
 	MyOrdersButtonText    = "Мои заказы"
 	BackButtonText        = "Назад"
