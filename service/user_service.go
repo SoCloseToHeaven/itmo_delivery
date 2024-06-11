@@ -11,6 +11,7 @@ import (
 type UserService interface {
 	GetOrCreateUser(u tgbotapi.Update) (*model.User, error)
 	UpdateUserState(user *model.User, newState model.UserState) error
+	GetByChatID(id int64) *model.User
 }
 
 type userService struct {
@@ -69,5 +70,12 @@ func (r *userService) UpdateUserState(user *model.User, newState model.UserState
 		return err
 	}
 
+	return nil
+}
+
+func (r *userService) GetByChatID(id int64) *model.User {
+	if user, err := r.UserRepository.GetByChatID(id); err == nil && user != nil {
+		return user
+	}
 	return nil
 }
