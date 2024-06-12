@@ -7,16 +7,16 @@ import (
 )
 
 const (
-	NewOrderButtonText    = "Новый заказ"
-	WatchOrdersButtonText = "Взять заказ"
-	AboutBotButtonText    = "О боте"
-	MyOrdersButtonText    = "Мои заказы"
-	BackButtonText        = "Назад"
-	ConfirmButtonText     = "Подтвердить"
-	CancelButtonText      = "Отменить"
-	SupportButtonText     = "Обратиться в поддержку"
-	FeedbackButtonText    = "Оставить обратную связь"
-	InstructionButtonText = "Инструкция пользователя"
+	NewOrderButtonText    = "📝 Новый заказ"
+	WatchOrdersButtonText = "📦 Взять заказ"
+	AboutBotButtonText    = "🤖 О боте"
+	MyOrdersButtonText    = "🍟 Мои заказы"
+	BackButtonText        = "🔙 Назад"
+	ConfirmButtonText     = "☑️ Подтвердить"
+	CancelButtonText      = "❌ Отменить"
+	SupportButtonText     = "⚙️ Обратиться в поддержку"
+	FeedbackButtonText    = "📲 Оставить обратную связь"
+	InstructionButtonText = "📄 Инструкция пользователя"
 )
 
 func mapBuildingToKeyboardRow(building ...string) []tgbotapi.KeyboardButton {
