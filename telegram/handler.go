@@ -47,10 +47,19 @@ func (r *updateHandler) Handle(u tgbotapi.Update) {
 		return
 	}
 
-	user, err := r.UserService().GetOrCreateUser(u)
+	user, err, created := r.UserService().GetOrCreateUser(u)
 
 	if err != nil {
 		log.Println(err.Error())
+		return
+	}
+
+	if created {
+		startMsg := tgbotapi.NewMessage(
+			user.ChatID,
+			utils.StartMsg,
+		)
+		r.SendMsgWithKeyboard(user, startMsg)
 		return
 	}
 

@@ -9,7 +9,7 @@ import (
 )
 
 type UserService interface {
-	GetOrCreateUser(u tgbotapi.Update) (*model.User, error)
+	GetOrCreateUser(u tgbotapi.Update) (*model.User, error, bool)
 	UpdateUserState(user *model.User, newState model.UserState) error
 	GetByChatID(id int64) *model.User
 }
@@ -24,7 +24,7 @@ func NewUserService(db *gorm.DB) UserService {
 	}
 }
 
-func (r *userService) GetOrCreateUser(u tgbotapi.Update) (*model.User, error) {
+func (r *userService) GetOrCreateUser(u tgbotapi.Update) (*model.User, error, bool) {
 	chatID := u.Message.Chat.ID
 	tgID := u.Message.From.ID
 
@@ -40,7 +40,7 @@ func (r *userService) GetOrCreateUser(u tgbotapi.Update) (*model.User, error) {
 
 	if err == nil {
 		tx.Rollback()
-		return user, nil
+		return user, nil, false
 	}
 
 	user = &model.User{
@@ -51,11 +51,11 @@ func (r *userService) GetOrCreateUser(u tgbotapi.Update) (*model.User, error) {
 
 	if err := tx.Save(user).Error; err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, err, false
 	}
 
 	tx.Commit()
-	return user, nil
+	return user, nil, true
 }
 
 func (r *userService) UpdateUserState(user *model.User, newState model.UserState) error {

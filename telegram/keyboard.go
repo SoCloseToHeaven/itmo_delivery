@@ -17,6 +17,7 @@ const (
 	SupportButtonText     = "⚙️ Обратиться в поддержку"
 	FeedbackButtonText    = "📲 Оставить обратную связь"
 	InstructionButtonText = "📄 Инструкция пользователя"
+	StartButtonText       = "/start"
 )
 
 func mapBuildingToKeyboardRow(building ...string) []tgbotapi.KeyboardButton {
