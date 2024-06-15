@@ -54,11 +54,12 @@ func (r *updateHandler) Handle(u tgbotapi.Update) {
 		return
 	}
 
-	if created {
+	if created || u.Message.Text == "/start" {
 		startMsg := tgbotapi.NewMessage(
 			user.ChatID,
 			utils.StartMsg,
 		)
+		_ = r.userService.UpdateUserState(user, model.Main)
 		r.SendMsgWithKeyboard(user, startMsg)
 		return
 	}
